@@ -1,5 +1,5 @@
 'use strict';
-import { window, workspace, ViewColumn, commands, ExtensionContext, ProgressLocation, Uri, Progress } from 'vscode';
+import { window, workspace, ViewColumn, commands, ExtensionContext, ProgressLocation, Uri, Progress, RelativePattern } from 'vscode';
 
 let output = window.createOutputChannel('formatAllWorkspaceFiles');
 
@@ -27,7 +27,7 @@ async function format(files: Uri[], index: number, resolve, progress: Progress<{
         resolve();
         return;
     }
-    
+
     try {
         progress.report({ message: files[index].path });
         output.appendLine(`Opening: ${files[index].path}`);
