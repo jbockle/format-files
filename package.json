@@ -4,6 +4,10 @@
     "description": "",
     "version": "0.0.1",
     "publisher": "jbockle",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jbockle/format-all-workspace-files.git"
+    },
     "engines": {
         "vscode": "^1.19.0"
     },
