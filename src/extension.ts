@@ -22,15 +22,22 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disposable);
 }
 async function format(files: Uri[], index: number, resolve, progress: Progress<{ message?: string }>) {
+    if (files.length <= index) {
+        window.showInformationMessage(`Format all files done. ${files.length} files processed.`);
+        resolve();
+        return;
+    }
+    
     try {
-        if (files.length <= index) {
-            window.showInformationMessage(`Format all files done. ${files.length} files processed.`);
-            resolve();
-            return;
-        }
         progress.report({ message: files[index].path });
         output.appendLine(`Opening: ${files[index].path}`);
-        let doc = await workspace.openTextDocument(files[index].path)
+        try {
+            let doc = await workspace.openTextDocument(files[index].path)
+        }
+        catch (error) {
+            handleError(error);
+            return;
+        }
         output.appendLine(`Showing ${doc.fileName}`);
         await window.showTextDocument(doc, { preview: false, viewColumn: ViewColumn.One }).then(async () => {
             output.appendLine(`Formatting ${doc.fileName}`);
@@ -39,11 +46,13 @@ async function format(files: Uri[], index: number, resolve, progress: Progress<{
             await doc.save();
             output.appendLine(`Closing ${doc.fileName}`);
             await commands.executeCommand('workbench.action.closeActiveEditor');
-            format(files, index + 1, resolve, progress);
         });
     }
     catch (error) {
         handleError(error);
+    }
+    finally {
+        format(files, index + 1, resolve, progress);
     }
 }
 function handleError(error) {
