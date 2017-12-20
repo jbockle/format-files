@@ -1,5 +1,5 @@
 'use strict';
-import { window, workspace, ViewColumn, commands, ExtensionContext, ProgressLocation, Uri, Progress, RelativePattern } from 'vscode';
+import { window, workspace, ViewColumn, commands, ExtensionContext, ProgressLocation, Uri, Progress, RelativePattern, TextDocument } from 'vscode';
 
 let output = window.createOutputChannel('formatAllWorkspaceFiles');
 
@@ -23,7 +23,7 @@ export function activate(context: ExtensionContext) {
 }
 async function format(files: Uri[], index: number, resolve, progress: Progress<{ message?: string }>) {
     if (files.length <= index) {
-        window.showInformationMessage(`Format all files done. ${files.length} files processed.`);
+        window.showInformationMessage(`Format all workspace files done. ${files.length} files processed.`);
         resolve();
         return;
     }
@@ -31,8 +31,9 @@ async function format(files: Uri[], index: number, resolve, progress: Progress<{
     try {
         progress.report({ message: files[index].path });
         output.appendLine(`Opening: ${files[index].path}`);
+        let doc: TextDocument;
         try {
-            let doc = await workspace.openTextDocument(files[index].path)
+            doc = await workspace.openTextDocument(files[index].path)
         }
         catch (error) {
             handleError(error);

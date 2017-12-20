@@ -2,7 +2,7 @@
     "name": "jbockle-format-all-workspace-files",
     "displayName": "Format ALL Workspace Files",
     "description": "",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "jbockle",
     "repository": {
         "type": "git",
