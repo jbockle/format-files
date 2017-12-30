@@ -1,64 +1,141 @@
 'use strict';
-import { window, workspace, ViewColumn, commands, ExtensionContext, ProgressLocation, Uri, Progress, RelativePattern, TextDocument } from 'vscode';
+import {
+    commands,
+    ExtensionContext,
+    Progress,
+    ProgressLocation,
+    TextDocument,
+    Uri,
+    ViewColumn,
+    window,
+    workspace,
+    StatusBarAlignment,
+    ThemeColor
+} from 'vscode';
+import { isNullOrUndefined } from 'util';
+import { FormatFilesHelper } from '../formatFilesHelper';
 
-let output = window.createOutputChannel('formatAllWorkspaceFiles');
+let helper = new FormatFilesHelper();
 
 export function activate(context: ExtensionContext) {
-    let disposable = commands.registerCommand('editor.action.formatAllWorkspaceFiles', async () => {
-        try {
-            let files = await workspace.findFiles('**/*', '**/node_modules/**');
-            let progressOptions = { location: ProgressLocation.Window, title: 'formating documents' };
-            window.withProgress(progressOptions, p => {
-                return new Promise((resolve, reject) => {
-                    format(files, 0, resolve, p);
-                });
-            });
-        }
-        catch (error) {
-            handleError(error);
-        }
-    });
-
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(commands.registerCommand('editor.action.formatFiles', beginFormatFiles));
+    context.subscriptions.push(commands.registerCommand('editor.action.cancelFormatting', cancelFormatting));
 }
-async function format(files: Uri[], index: number, resolve, progress: Progress<{ message?: string }>) {
+
+// region cancellation
+function createCancelStatusBarItem() {
+    let statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
+    statusBarItem.text = "Cancel Formatting";
+    statusBarItem.command = 'editor.action.cancelFormatting';
+    statusBarItem.color = new ThemeColor('statusBar.foreground');
+    statusBarItem.show();
+    return statusBarItem;
+}
+
+function disposeCancelStatusBarItem() {
+    helper.cancelOption.hide();
+    helper.cancelOption.dispose();
+}
+
+async function cancelFormatting() {
+    helper.cancelled = true;
+}
+// endregion
+
+// region process
+async function beginFormatFiles(folder) {
+    try {
+        helper.initialize();
+        let folders = workspace.workspaceFolders;
+        if (!folders) {
+            let message = 'Format Files can only be utilized if VS Code is opened on a workspace folder.';
+            helper.log(message);
+            window.showWarningMessage(message);
+            return;
+        }
+        let include = helper.getInclude();
+        if (isNullOrUndefined(folder)) {
+            folder = { path: `**/*.${include}` };
+        }
+        else {
+            let root = workspace.workspaceFolders[0];
+            folder.path = folder.path.replace(root.uri.path + '/', '');
+            folder.path += `/**/*.${include}`;
+        }
+        helper.cancelled = false;
+        let files = await workspace.findFiles(folder.path, helper.getExcludePattern());
+        let progressOptions = { location: ProgressLocation.Window, title: 'formating documents' };
+        helper.cancelOption = createCancelStatusBarItem();
+        window
+            .withProgress(progressOptions, p => {
+                return new Promise((resolve, reject) => {
+                    formatFiles(files, 0, resolve, p);
+                });
+            })
+            .then(endFormatFiles);
+
+    }
+    catch (error) {
+        handleError(error);
+    }
+}
+
+function endFormatFiles() {
+    disposeCancelStatusBarItem();
+    helper.log('Operation completed');
+}
+
+async function formatFiles(files: Uri[], index: number, resolve, progress: Progress<{ message?: string }>) {
+    if (helper.cancelled) {
+        window.showInformationMessage(`Format files operation cancelled. Processed ${index} files.`);
+        return;
+    }
+
     if (files.length <= index) {
-        window.showInformationMessage(`Format all workspace files done. ${files.length} files processed.`);
+        window.showInformationMessage(`Format files done. Processed ${files.length} files.`);
         resolve();
         return;
     }
 
     try {
         progress.report({ message: files[index].path });
-        output.appendLine(`Opening: ${files[index].path}`);
-        let doc: TextDocument;
-        try {
-            doc = await workspace.openTextDocument(files[index].path)
-        }
-        catch (error) {
-            handleError(error);
-            return;
-        }
-        output.appendLine(`Showing ${doc.fileName}`);
-        await window.showTextDocument(doc, { preview: false, viewColumn: ViewColumn.One }).then(async () => {
-            output.appendLine(`Formatting ${doc.fileName}`);
-            await commands.executeCommand('editor.action.formatDocument');
-            output.appendLine(`Saving ${doc.fileName}`);
-            await doc.save();
-            output.appendLine(`Closing ${doc.fileName}`);
-            await commands.executeCommand('workbench.action.closeActiveEditor');
-        });
+        await formatFile(files[index]);
     }
     catch (error) {
         handleError(error);
     }
     finally {
-        format(files, index + 1, resolve, progress);
+        formatFiles(files, index + 1, resolve, progress);
     }
 }
-function handleError(error) {
-    output.appendLine(`An error occurred: ${error.message}`);
+
+async function formatFile(file: Uri) {
+    helper.log(`Opening: ${file.path}`);
+    let doc: TextDocument;
+    try {
+        doc = await workspace.openTextDocument(file.path)
+    }
+    catch (error) {
+        handleError(error);
+        return;
+    }
+    helper.log(`Showing ${doc.fileName}`);
+    await window.showTextDocument(doc, { preview: false, viewColumn: ViewColumn.One }).then(async () => {
+        helper.log(`Formatting ${doc.fileName}`);
+        await commands.executeCommand('editor.action.formatDocument');
+        helper.log(`Saving ${doc.fileName}`);
+        await doc.save();
+        helper.log(`Closing ${doc.fileName}`);
+        await commands.executeCommand('workbench.action.closeActiveEditor');
+    });
 }
-// this method is called when your extension is deactivated
+// endregion
+
+function handleError(error) {
+    helper.log(`An error occurred: ${error.message}`);
+    console.log(error);
+}
+
 export function deactivate() {
+    helper.log('Format Files deactivated');
 }

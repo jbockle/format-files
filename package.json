@@ -1,30 +1,51 @@
 {
-    "name": "jbockle-format-all-workspace-files",
-    "displayName": "Format ALL Workspace Files",
+    "name": "jbockle-format-files",
+    "displayName": "Format Files",
     "description": "",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "jbockle",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jbockle/format-all-workspace-files.git"
+        "url": "https://github.com/jbockle/format-files.git"
     },
     "engines": {
         "vscode": "^1.19.0"
     },
     "categories": [
-        "Other"
+        "Formatters"
     ],
     "activationEvents": [
-        "onCommand:editor.action.formatAllWorkspaceFiles"
+        "onCommand:editor.action.formatFiles"
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [
-            {
-                "command": "editor.action.formatAllWorkspaceFiles",
-                "title": "Format ALL Workspace Files"
+        "configuration": [{
+            "properties": {
+                "formatFiles.include": {
+                    "scope":"resource",
+                    "type": "string",
+                    "description": "Controls which extensions to include in formatting. Default is wildcard for all extensions",
+                    "default": "*"
+                },
+                "formatFiles.excludePattern": {
+                    "scope": "resource",
+                    "type": "string",
+                    "description": "Excludes the files/folders declared in pattern",
+                    "default": "{**/node_modules/**,**/.vscode/**}"
+                }
             }
-        ]
+        }],
+        "commands": [{
+            "command": "editor.action.formatFiles",
+            "title": "Format Files"
+        }],
+        "menus": {
+            "explorer/context": [{
+                "when": "explorerResourceIsFolder",
+                "command": "editor.action.formatFiles",
+                "group": "navigation@-1"
+            }]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
