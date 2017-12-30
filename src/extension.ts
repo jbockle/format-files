@@ -13,7 +13,7 @@ import {
     ThemeColor
 } from 'vscode';
 import { isNullOrUndefined } from 'util';
-import { FormatFilesHelper } from '../formatFilesHelper';
+import { FormatFilesHelper } from './formatFilesHelper';
 
 let helper = new FormatFilesHelper();
 

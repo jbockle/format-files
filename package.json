@@ -2,7 +2,7 @@
     "name": "jbockle-format-files",
     "displayName": "Format Files",
     "description": "",
-    "version": "0.0.3",
+    "version": "1.0.0",
     "publisher": "jbockle",
     "repository": {
         "type": "git",
@@ -19,32 +19,38 @@
     ],
     "main": "./out/extension",
     "contributes": {
-        "configuration": [{
-            "properties": {
-                "formatFiles.include": {
-                    "scope":"resource",
-                    "type": "string",
-                    "description": "Controls which extensions to include in formatting. Default is wildcard for all extensions",
-                    "default": "*"
-                },
-                "formatFiles.excludePattern": {
-                    "scope": "resource",
-                    "type": "string",
-                    "description": "Excludes the files/folders declared in pattern",
-                    "default": "{**/node_modules/**,**/.vscode/**}"
+        "configuration": [
+            {
+                "properties": {
+                    "formatFiles.include": {
+                        "scope": "resource",
+                        "type": "string",
+                        "description": "Controls which extensions to include in formatting. Default is wildcard for all extensions",
+                        "default": "*"
+                    },
+                    "formatFiles.excludePattern": {
+                        "scope": "resource",
+                        "type": "string",
+                        "description": "Excludes the files/folders declared in pattern",
+                        "default": "{**/node_modules/**,**/.vscode/**}"
+                    }
                 }
             }
-        }],
-        "commands": [{
-            "command": "editor.action.formatFiles",
-            "title": "Format Files"
-        }],
-        "menus": {
-            "explorer/context": [{
-                "when": "explorerResourceIsFolder",
+        ],
+        "commands": [
+            {
                 "command": "editor.action.formatFiles",
-                "group": "navigation@-1"
-            }]
+                "title": "Format Files"
+            }
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "when": "explorerResourceIsFolder",
+                    "command": "editor.action.formatFiles",
+                    "group": "navigation@-1"
+                }
+            ]
         }
     },
     "scripts": {
