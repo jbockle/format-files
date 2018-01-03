@@ -1,6 +1,6 @@
 # Format Files README
 
-Formats all files in the current workspace
+Formats all files in the current workspace/or selected folder
 
 * Use:
   * Open command pallette (Ctrl+Shift+P) & enter "Format Files"
