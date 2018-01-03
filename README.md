@@ -13,3 +13,9 @@ Formats all files in the current workspace/or selected folder
 ## Requirements
 
 Each extension needs a formatter installed for it to work, or else the VSCode formatter will display an error that it does not have a formatter for the given extension.
+
+Some recommended formatters:
+* [Beautify - Javascript,JSON,CSS,Sass,HTML](https://marketplace.visualstudio.com/items?itemName=HookyQR.beautify)
+* [C# FixFormat - C#](https://marketplace.visualstudio.com/items?itemName=Leopotam.csharpfixformat)
+* [Clang Format - C,C++,Java,JavaScript,Objective-C,Objective-C++,Protobuf](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
+* [Prettier - Javascript,TypeScript,CSS](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)

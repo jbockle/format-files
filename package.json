@@ -2,7 +2,7 @@
     "name": "jbockle-format-files",
     "displayName": "Format Files",
     "description": "",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "jbockle",
     "repository": {
         "type": "git",
@@ -10,6 +10,10 @@
     },
     "engines": {
         "vscode": "^1.19.0"
+    },
+    "galleryBanner": {
+        "color": "#009CFF",
+        "theme": "light"
     },
     "categories": [
         "Formatters"
