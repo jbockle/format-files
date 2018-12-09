@@ -1,4 +1,6 @@
 # Change Log
+## 2.0.1 (2018-12-08)
+* Fix progress bar
 ## 2.0.0 (2018-12-08)
 * Bug fixes:
   * Does not run other editor actions on save [(#5)](https://github.com/jbockle/format-files/issues/5) [(#2)](https://github.com/jbockle/format-files/issues/2)

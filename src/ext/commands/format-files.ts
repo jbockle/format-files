@@ -12,7 +12,7 @@ export class FormatFiles {
                 title: 'formatting documents',
             },
             async (progress, token) => {
-                const incrementProgressBy = 1 / files.length;
+                const incrementProgressBy = (1 / files.length) * 100;
                 try {
                     for (let index = 0; index < files.length; index++) {
                         const file = files[index];
