@@ -2,7 +2,7 @@
     "name": "jbockle-format-files",
     "displayName": "Format Files",
     "description": "",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "publisher": "jbockle",
     "repository": {
         "type": "git",
@@ -19,31 +19,37 @@
         "Formatters"
     ],
     "activationEvents": [
-        "onCommand:editor.action.formatFiles"
+        "onCommand:formatFiles.start"
     ],
     "main": "./out/extension",
     "contributes": {
         "configuration": [
             {
                 "properties": {
-                    "formatFiles.include": {
+                    "formatFiles.extensionsToInclude": {
                         "scope": "resource",
                         "type": "string",
-                        "description": "Controls which extensions to include in formatting. Default is wildcard for all extensions",
+                        "description": "Glob pattern of files to include",
                         "default": "*"
                     },
                     "formatFiles.excludePattern": {
                         "scope": "resource",
                         "type": "string",
-                        "description": "Excludes the files/folders declared in pattern",
-                        "default": "{**/node_modules/**,**/.vscode/**}"
+                        "description": "Comma seperated glob pattern of files to exclude",
+                        "default": "**/node_modules,**/.vscode,**/dist/**,**/.chrome"
+                    },
+                    "formatFiles.inheritWorkspaceExcludedFiles": {
+                        "scope": "resource",
+                        "type": "boolean",
+                        "description": "Determines if Format Files will inherit workspace excluded files",
+                        "default": true
                     }
                 }
             }
         ],
         "commands": [
             {
-                "command": "editor.action.formatFiles",
+                "command": "formatFiles.start",
                 "title": "Format Files"
             }
         ],
@@ -51,7 +57,7 @@
             "explorer/context": [
                 {
                     "when": "explorerResourceIsFolder",
-                    "command": "editor.action.formatFiles",
+                    "command": "formatFiles.start",
                     "group": "navigation@-1"
                 }
             ]
@@ -61,13 +67,16 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/jest": "^23.3.10",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "jest": "^23.6.0",
+        "ts-jest": "^23.10.5",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typescript": "^3.2.2",
+        "vscode": "1.1.17"
     }
 }
