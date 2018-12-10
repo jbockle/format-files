@@ -28,4 +28,15 @@ export class Config {
             .filter((glob) => excludes[glob])
             .map((glob) => glob);
     }
+
+    public static getInstance(): Config {
+        if (!this.instance) {
+            this.instance = new Config();
+        }
+        return this.instance;
+    }
+
+    private static instance: Config;
+
+    private constructor() { }
 }

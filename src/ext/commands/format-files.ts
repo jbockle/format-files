@@ -3,6 +3,16 @@ import { Globals } from '../../globals';
 import formatFile from './format-file';
 
 export class FormatFiles {
+    public static getInstance(): FormatFiles {
+        if (!this.instance) {
+            this.instance = new FormatFiles();
+        }
+        return this.instance;
+    }
+
+    private static instance: FormatFiles;
+
+    private constructor() { }
 
     public async execute(files: Uri[]): Promise<void> {
         await window.withProgress(

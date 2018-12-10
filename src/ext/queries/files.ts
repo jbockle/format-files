@@ -1,31 +1,61 @@
-import { EndOfLine, GlobPattern, scm, Uri, window, workspace } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
 import { Globals } from '../../globals';
 import { Config } from './config';
-import openFile from './file';
-import getGitIgnoreGlobs from './git-ignore-globs';
 
 export class Files {
-    private config: Config = new Config();
 
     public get root(): string {
         return workspace.workspaceFolders[0].uri.path;
     }
+    public static getInstance(): Files {
+        if (!this.instance) {
+            this.instance = new Files();
+        }
+        return this.instance;
+    }
+
+    private static instance: Files;
+
+    public config = Config.getInstance();
+
+    private constructor() { }
+
+    public async shouldUseDefaultExcludes(): Promise<boolean> {
+        const result = await window.showQuickPick([
+            `Yes - Use 'formatFiles' settings in vscode`,
+            `No - Don't use excludes`,
+        ],
+            { placeHolder: 'Use default excludes?', ignoreFocusOut: true });
+
+        if (!result) {
+            Globals.logger.error('Operation Aborted', true);
+        }
+
+        return result.startsWith('Yes');
+    }
 
     public async getFiles(folder: Uri): Promise<Uri[]> {
-        const includeGlob = this.getIncludeGlob(folder);
+        const includeGlob = await this.getIncludeGlob(folder);
         const excludeGlob = await this.getExcludeGlob();
 
+        return await (this.findFiles(includeGlob, excludeGlob));
+    }
+
+    public async getFilesByGlob(glob: string, defaultExcludes: boolean): Promise<Uri[]> {
+        const excludeGlob = defaultExcludes ? await this.getExcludeGlob() : '';
+
+        return await (this.findFiles(glob, excludeGlob));
+    }
+
+    private async findFiles(includeGlob: string, excludeGlob: string): Promise<Uri[]> {
         const files = await workspace.findFiles(includeGlob, excludeGlob);
         Globals.logger.info(`Found ${files.length}`);
         files.forEach((file) => Globals.logger.info(`\t${file.path}`));
+
         return files;
     }
 
-    public async getFilesByGlob(glob: GlobPattern): Promise<Uri[]> {
-        throw new Error('not implemented');
-    }
-
-    private getIncludeGlob(folder?: Uri): GlobPattern {
+    private getIncludeGlob(folder?: Uri): string {
         Globals.logger.info(`creating include glob`);
         if (folder) {
             Globals.logger.info(`\t\tfolder specified: ${folder.path}`);

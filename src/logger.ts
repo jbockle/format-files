@@ -12,9 +12,6 @@ export class Logger {
     constructor(level: LogLevel) {
         this.level = level;
         this.output = window.createOutputChannel('Format Files');
-        this.info('test');
-        this.warn('test');
-        this.error('test');
     }
 
     public info(message: string): void {
