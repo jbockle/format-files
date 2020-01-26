@@ -9,7 +9,7 @@
         "url": "https://github.com/jbockle/format-files.git"
     },
     "engines": {
-        "vscode": "^1.19.0"
+        "vscode": "^1.22.0"
     },
     "galleryBanner": {
         "color": "#009CFF",
@@ -71,17 +71,16 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "@types/jest": "^23.3.10",
-        "@types/node": "^7.0.43",
-        "jest": "^23.6.0",
-        "ts-jest": "^23.10.5",
-        "ts-node": "^7.0.1",
-        "tslint": "^5.11.0",
-        "typescript": "^3.2.2",
-        "vscode": "1.1.17"
+        "@types/jest": "^24.9.1",
+        "@types/node": "^13.5.0",
+        "@types/vscode": "^1.22.0",
+        "jest": "^25.1.0",
+        "ts-jest": "^25.0.0",
+        "ts-node": "^8.6.2",
+        "tslint": "^6.0.0",
+        "typescript": "^3.7.5"
     }
 }
