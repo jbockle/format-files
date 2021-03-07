@@ -1,60 +1,78 @@
-import { commands, ExtensionContext, Uri, window } from 'vscode';
-import { FormatFiles } from './ext/commands/format-files';
-import { RequestGlob } from './ext/commands/request-glob';
-import shouldStartFormatting from './ext/commands/should-start';
-import { Files } from './ext/queries/files';
-import { Globals } from './globals';
+import { commands, ExtensionContext } from 'vscode';
+import { Constants } from './constants';
+import { Logger } from './ext/utilities/logger';
+import prompts from './ext/prompts';
+import { GetFiles } from './ext/queries/get-files';
+import { formatFiles } from './ext/commands/format-files';
+import { validateInWorkspace } from './ext/commands/validate-in-workspace';
+
+const logger = new Logger('ext');
 
 export function activate(context: ExtensionContext): void {
-    Globals.logger.info('activating');
+  logger.info('activating');
 
-    registerCommand(
-        context,
-        Globals.formatFiles,
-        formatFiles);
-    registerCommand(
-        context,
-        Globals.formatFilesFromGlob,
-        fromGlob);
+  registerCommand(
+    context,
+    Constants.formatFiles,
+    formatFilesInWorkspace);
+  registerCommand(
+    context,
+    Constants.formatFilesFromGlob,
+    fromGlob);
 
-    Globals.logger.info('activated');
+  logger.info('activated');
 }
 
 export function deactivate(): void {
-    Globals.logger.info('Format Files deactivated');
+  logger.info('Format Files deactivated');
 }
 
 function registerCommand(context: ExtensionContext, command: string, callback: any): void {
-    Globals.logger.info(`registering command ${command}`);
-    context.subscriptions
-        .push(commands.registerCommand(command, callback));
+  logger.info(`registering command ${command}`);
+  context.subscriptions
+    .push(commands.registerCommand(command, callback));
 }
 
-async function formatFiles(folder?: Uri): Promise<void> {
-    Globals.logger.info(`Starting Format Files - Workspace`);
-    Globals.workspaceValidator.validate();
+async function formatFilesInWorkspace(): Promise<void> {
+  try {
+    openOutputChannel();
+    logger.info(`Starting Format Files - Workspace`);
 
-    const files = await Files.getInstance().getFiles(folder);
+    validateInWorkspace();
+    const workspaceFolder = await prompts.selectWorkspaceFolder();
+    const files = await GetFiles.execute(workspaceFolder);
+    await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files?`);
+    await formatFiles(files);
 
-    await shouldStartFormatting(files.length,
-        `Format Files: Start formatting ${files.length} workspace files?`);
-
-    await FormatFiles.getInstance().execute(files);
-    Globals.logger.info(`Format Files completed`);
+    logger.info(`Format Files completed`);
+  }
+  catch (error) {
+    logger.error(error);
+  }
 }
 
 async function fromGlob(): Promise<void> {
-    Globals.logger.info(`Starting Format Files - By Glob Pattern`);
-    Globals.workspaceValidator.validate();
+  try {
+    openOutputChannel();
+    logger.info(`Starting Format Files - By Glob Pattern`);
 
-    const glob = await RequestGlob.execute();
-    const useDefaultExcludes = await Files.getInstance().shouldUseDefaultExcludes();
+    validateInWorkspace();
+    const workspaceFolder = await prompts.selectWorkspaceFolder();
+    const glob = await prompts.requestGlob();
+    const useDefaultExcludes = await prompts.useDefaultExcludes();
+    const files = await GetFiles.executeWithGlob(workspaceFolder, glob, useDefaultExcludes);
+    await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files using glob '${glob}'?`);
+    await formatFiles(files);
 
-    const files = await Files.getInstance().getFilesByGlob(glob, useDefaultExcludes);
+    logger.info(`Format Files completed`);
+  }
+  catch (error) {
+    logger.error(error);
+  }
+}
 
-    await shouldStartFormatting(files.length,
-        `Format Files: Start formatting ${files.length} workspace files using glob '${glob}'?`);
-
-    await FormatFiles.getInstance().execute(files);
-    Globals.logger.info(`Format Files completed`);
+function openOutputChannel(): void {
+  Logger.outputChannel.show(true);
+  Logger.outputChannel.appendLine('');
+  Logger.outputChannel.appendLine(''.padStart(50, ':'));
 }
