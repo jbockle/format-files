@@ -1,5 +1,7 @@
 # Format Files README
 
+[Format Files on VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=jbockle.jbockle-format-files)
+
 Formats all files in the current workspace/selected folder/glob.  Due to the limitations in VSCode API, this opens each file, runs formatting command, saves the file (other save actions are started as well, to support features such as `tslint.autoFixOnSave` on typescript files), then closes it. The time to complete depends on the number of files and how large the files are.
 
 ## Usage
@@ -11,8 +13,6 @@ Formats all files in the current workspace/selected folder/glob.  Due to the lim
   * Prompts for a user defined glob pattern
   * Prompts to use default exclude options or none
   * Keybindable to 'formatFiles.start.fromGlob' command
-* Right click a workspace folder and select 'Format Files' to format all files in directory
-  * Uses default exclude options
 
 > Will prompt to confirms to start formatting, check ***Format Files*** in Output pane for list of files that will be formatted
 
