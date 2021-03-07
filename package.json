@@ -9,7 +9,7 @@
     "url": "https://github.com/jbockle/format-files.git"
   },
   "engines": {
-    "vscode": "^1.22.0"
+    "vscode": "^1.54.0"
   },
   "galleryBanner": {
     "color": "#009CFF",
