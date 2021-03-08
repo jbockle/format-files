@@ -6,35 +6,29 @@ export class GetFiles {
   private _config = Config.instance;
   private _logger: Logger;
 
-  private constructor(private _root: string) {
+  private constructor() {
     this._logger = new Logger('get-files');
   }
 
-  public static async execute(workspaceFolder: WorkspaceFolder): Promise<Uri[]> {
-    const getFiles = new GetFiles(workspaceFolder.uri.path);
-    const includeGlob = getFiles.getIncludeGlob(workspaceFolder.uri);
+  public static async inWorkspace(workspaceFolder: WorkspaceFolder): Promise<Uri[]> {
+    const getFiles = new GetFiles();
+    const includeGlob = getFiles.getIncludeGlob();
     const excludeGlob = await getFiles.getExcludeGlob();
 
     return await getFiles.execute(workspaceFolder, includeGlob, excludeGlob);
   }
 
-  public static async executeWithGlob(workspaceFolder: WorkspaceFolder, includeGlob: string, defaultExcludes: boolean): Promise<Uri[]> {
-    const files = new GetFiles(workspaceFolder.uri.path);
+  public static async inWorkspaceWithGlob(workspaceFolder: WorkspaceFolder, includeGlob: string, defaultExcludes: boolean): Promise<Uri[]> {
+    const files = new GetFiles();
     const excludeGlob = defaultExcludes ? await files.getExcludeGlob() : '';
 
     return await files.execute(workspaceFolder, includeGlob, excludeGlob);
   }
 
-  private getIncludeGlob(folder?: Uri): string {
+  private getIncludeGlob(): string {
     this._logger.info(`creating include glob`);
-    if (folder) {
-      this._logger.info(`\t\tfolder specified: ${folder.path}`);
-      const path = folder.path.replace(`${this._root}/`, '');
-      return `${path}/**/*.${this._config.extensionsToInclude}`;
-    }
-
     const glob = `**/*.${this._config.extensionsToInclude}`;
-    this._logger.info(`\t\t${glob}`);
+    this._logger.info(`\t${glob}`);
     return glob;
   }
 

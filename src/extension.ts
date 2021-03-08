@@ -40,7 +40,7 @@ async function formatFilesInWorkspace(): Promise<void> {
 
     validateInWorkspace();
     const workspaceFolder = await prompts.selectWorkspaceFolder();
-    const files = await GetFiles.execute(workspaceFolder);
+    const files = await GetFiles.inWorkspace(workspaceFolder);
     await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files?`);
     await formatFiles(files);
 
@@ -60,7 +60,7 @@ async function fromGlob(): Promise<void> {
     const workspaceFolder = await prompts.selectWorkspaceFolder();
     const glob = await prompts.requestGlob();
     const useDefaultExcludes = await prompts.useDefaultExcludes();
-    const files = await GetFiles.executeWithGlob(workspaceFolder, glob, useDefaultExcludes);
+    const files = await GetFiles.inWorkspaceWithGlob(workspaceFolder, glob, useDefaultExcludes);
     await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files using glob '${glob}'?`);
     await formatFiles(files);
 
