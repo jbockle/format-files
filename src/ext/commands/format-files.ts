@@ -2,6 +2,7 @@ import { commands, ProgressLocation, Uri, ViewColumn, window } from 'vscode';
 import { Logger } from '../utilities/logger';
 import { tryOpenDocument } from './try-open-document';
 import { OperationAborted } from '../errors/operation-aborted';
+import { Config } from '../utilities/config';
 
 const logger = new Logger('format-files');
 
@@ -43,6 +44,9 @@ async function formatFile(file: Uri): Promise<void> {
 
   if (doc) {
     await window.showTextDocument(doc, { preview: false, viewColumn: ViewColumn.One });
+    if (Config.instance.runOrganizeImports) {
+      await commands.executeCommand('editor.action.organizeImports');
+    }
     await commands.executeCommand('editor.action.formatDocument');
     await commands.executeCommand('workbench.action.files.save');
     await commands.executeCommand('workbench.action.closeActiveEditor');

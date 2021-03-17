@@ -5,6 +5,7 @@ interface FormatFilesConfig {
   extensionsToInclude?: string;
   excludePattern?: string;
   inheritWorkspaceExcludedFiles?: boolean;
+  runOrganizeImports?: boolean;
 }
 
 export class Config {
@@ -32,6 +33,10 @@ export class Config {
 
   public get inheritWorkspaceExcludedFiles(): boolean {
     return this._formatFilesConfig.inheritWorkspaceExcludedFiles ?? false;
+  }
+
+  public get runOrganizeImports(): boolean {
+    return this._formatFilesConfig.runOrganizeImports ?? false;
   }
 
   public get workspaceExcludes(): string[] {
