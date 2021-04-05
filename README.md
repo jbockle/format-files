@@ -23,6 +23,7 @@ Formats all files in the current workspace/selected folder/glob.  Due to the lim
 * `formatFiles.extensionsToInclude`: [ *default*: '\*' ]<br>comma delimited list of extensions to include between brace, i.e. "{ts,js,cp,cs}", if this is not specified all extensions are included
 * `formatFiles.excludePattern`: [ *default*: '\*\*/node_modules, \*\*/.vscode, \*\*/dist/\*\*, \*\*/.chrome']<br>GlobPattern of paths to exclude.  Default excludePattern specifies node_modules and .vscode folder
 * `formatFiles.inheritWorkspaceExcludedFiles`: [*default*: `true`]<br>Specifies that workspace globs specified in `files.exclude` that are `true` will be included in exclude glob
+* `formatFiles.runOrganizeImports`: [*default*: `true`]<br>Additionally organize all imports when formatting files (Uses the built-in 'Organize Imports' command, which is supported by some languages)
 
 ## Requirements
 
