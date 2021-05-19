@@ -52,7 +52,7 @@ export class Config {
   }
 
   public static load(): void {
-    const config = Config.instance
+    const config = Config.instance;
     config.loadConfigFromWorkspace();
   }
 }
