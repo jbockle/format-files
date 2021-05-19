@@ -5,6 +5,7 @@ import prompts from './ext/prompts';
 import { GetFiles } from './ext/queries/get-files';
 import { formatFiles } from './ext/commands/format-files';
 import { validateInWorkspace } from './ext/commands/validate-in-workspace';
+import { Config } from './ext/utilities/config';
 
 const logger = new Logger('ext');
 
@@ -37,7 +38,7 @@ async function formatFilesInWorkspace(): Promise<void> {
   try {
     openOutputChannel();
     logger.info(`Starting Format Files - Workspace`);
-
+    Config.load();
     validateInWorkspace();
     const workspaceFolder = await prompts.selectWorkspaceFolder();
     const files = await GetFiles.inWorkspace(workspaceFolder);
@@ -55,7 +56,7 @@ async function fromGlob(): Promise<void> {
   try {
     openOutputChannel();
     logger.info(`Starting Format Files - By Glob Pattern`);
-
+    Config.load();
     validateInWorkspace();
     const workspaceFolder = await prompts.selectWorkspaceFolder();
     const glob = await prompts.requestGlob();
