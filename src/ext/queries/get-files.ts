@@ -10,9 +10,9 @@ export class GetFiles {
     this._logger = new Logger('get-files');
   }
 
-  public static async inWorkspace(workspaceFolder: WorkspaceFolder): Promise<Uri[]> {
+  public static async inWorkspace(workspaceFolder: WorkspaceFolder, folder?: Uri): Promise<Uri[]> {
     const getFiles = new GetFiles();
-    const includeGlob = getFiles.getIncludeGlob();
+    const includeGlob = getFiles.getIncludeGlob({ workspaceFolder, folder });
     const excludeGlob = await getFiles.getExcludeGlob();
 
     return await getFiles.execute(workspaceFolder, includeGlob, excludeGlob);
@@ -25,13 +25,17 @@ export class GetFiles {
     return await files.execute(workspaceFolder, includeGlob, excludeGlob);
   }
 
-  private getIncludeGlob(): string {
+  private getIncludeGlob(args: { workspaceFolder?: WorkspaceFolder, folder?: Uri }): string {
     this._logger.info(`creating include glob`);
-    const includes = this._config.extensionsToInclude
-      .split(',')
-      .map((inc) => '**/*.' + inc.trim());
 
-    const glob = `{${includes.join(',')}}`;
+    let glob = `**/*.${this._config.extensionsToInclude}`;
+
+    if (args.folder) {
+      this._logger.info(`\tfolder specified: ${args.folder.path}`);
+      const path = args.folder.path.replace(`${args.workspaceFolder?.uri.path}/`, '');
+      glob = `${path}/**/*.${this._config.extensionsToInclude}`;
+    }
+
     this._logger.info(`\t${glob}`);
     return glob;
   }
