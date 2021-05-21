@@ -2,7 +2,7 @@
   "name": "jbockle-format-files",
   "displayName": "Format Files",
   "description": "",
-  "version": "3.2",
+  "version": "3.2.0",
   "publisher": "jbockle",
   "repository": {
     "type": "git",
