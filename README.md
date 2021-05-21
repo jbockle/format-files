@@ -13,6 +13,7 @@ Formats all files in the current workspace/selected folder/glob.  Due to the lim
   * Prompts for a user defined glob pattern
   * Prompts to use default exclude options or none
   * Keybindable to 'formatFiles.start.fromGlob' command
+* Right click a folder and select "Start Format Files: This Folder"
 
 > Will prompt to confirms to start formatting, check ***Format Files*** in Output pane for list of files that will be formatted
 
