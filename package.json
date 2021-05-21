@@ -20,6 +20,7 @@
   ],
   "activationEvents": [
     "onCommand:formatFiles.start.workspace",
+    "onCommand:formatFiles.start.workspaceFolder",
     "onCommand:formatFiles.start.fromGlob"
   ],
   "main": "./out/extension",
@@ -60,6 +61,11 @@
         "title": "Start Format Files: Workspace"
       },
       {
+        "command": "formatFiles.start.workspaceFolder",
+        "title": "Start Format Files: This Folder",
+        "enablement": "explorerViewletVisible && filesExplorerFocus && explorerResourceIsFolder"
+      },
+      {
         "command": "formatFiles.start.fromGlob",
         "title": "Start Format Files: From Glob"
       }
@@ -68,7 +74,7 @@
       "explorer/context": [
         {
           "when": "explorerResourceIsFolder",
-          "command": "formatFiles.start.workspace",
+          "command": "formatFiles.start.workspaceFolder",
           "group": "navigation@-1"
         }
       ]

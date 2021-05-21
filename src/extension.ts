@@ -1,4 +1,4 @@
-import { commands, ExtensionContext } from 'vscode';
+import { commands, ExtensionContext, Uri } from 'vscode';
 import { Constants } from './constants';
 import { Logger } from './ext/utilities/logger';
 import prompts from './ext/prompts';
@@ -18,6 +18,10 @@ export function activate(context: ExtensionContext): void {
     formatFilesInWorkspace);
   registerCommand(
     context,
+    Constants.formatFilesFolder,
+    formatFilesInWorkspace);
+  registerCommand(
+    context,
     Constants.formatFilesFromGlob,
     fromGlob);
 
@@ -34,14 +38,14 @@ function registerCommand(context: ExtensionContext, command: string, callback: a
     .push(commands.registerCommand(command, callback));
 }
 
-async function formatFilesInWorkspace(): Promise<void> {
+async function formatFilesInWorkspace(inFolder?: Uri): Promise<void> {
   try {
     openOutputChannel();
-    logger.info(`Starting Format Files - Workspace`);
+    logger.info(`Starting Format Files - Workspace ${inFolder ? 'Folder' : ''}`);
     Config.load();
     validateInWorkspace();
-    const workspaceFolder = await prompts.selectWorkspaceFolder();
-    const files = await GetFiles.inWorkspace(workspaceFolder);
+    const workspaceFolder = await prompts.selectWorkspaceFolder(inFolder);
+    const files = await GetFiles.inWorkspace(workspaceFolder, inFolder);
     await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files?`);
     await formatFiles(files);
 

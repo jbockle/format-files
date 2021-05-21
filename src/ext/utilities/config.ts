@@ -30,7 +30,16 @@ export class Config {
   }
 
   public get extensionsToInclude(): string {
-    return this._formatFilesConfig.extensionsToInclude || '*';
+    let targetExtensions = this._formatFilesConfig.extensionsToInclude || '*';
+
+    // for backwards compatibility, remove { & } if present
+    targetExtensions = targetExtensions.replace(/\{|\}/g, '');
+
+    targetExtensions = targetExtensions.indexOf(',') === -1
+      ? targetExtensions.trim()
+      : `{${targetExtensions.split(',').map(ext => ext.trim()).join(`,`)}}`;
+
+    return targetExtensions;
   }
 
   public get excludePattern(): string {
