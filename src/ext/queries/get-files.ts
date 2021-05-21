@@ -27,7 +27,11 @@ export class GetFiles {
 
   private getIncludeGlob(): string {
     this._logger.info(`creating include glob`);
-    const glob = `**/*.${this._config.extensionsToInclude}`;
+    const includes = this._config.extensionsToInclude
+      .split(',')
+      .map((inc) => '**/*.' + inc.trim());
+
+    const glob = `{${includes.join(',')}}`;
     this._logger.info(`\t${glob}`);
     return glob;
   }
