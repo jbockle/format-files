@@ -2,7 +2,7 @@
   "name": "jbockle-format-files",
   "displayName": "Format Files",
   "description": "",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "publisher": "jbockle",
   "repository": {
     "type": "git",
@@ -58,7 +58,7 @@
           "formatFiles.useGitIgnore": {
             "scope": "resource",
             "type": "boolean",
-            "description": "If the workspace folder has a git repository, skips files that git ignores",
+            "description": "If the workspace folder is a git repository, skips files that git ignores",
             "default": true
           }
         }
