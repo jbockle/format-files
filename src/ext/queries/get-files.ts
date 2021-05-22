@@ -1,5 +1,6 @@
 import { Uri, workspace, WorkspaceFolder } from 'vscode';
 import { Config } from '../utilities/config';
+import { Git } from '../utilities/git';
 import { Logger } from '../utilities/logger';
 
 export class GetFiles {
@@ -64,6 +65,11 @@ export class GetFiles {
       .filter(file => {
         return file.path.startsWith(workspaceFolder.uri.path);
       });
+
+    if (Config.instance.useGitIgnore) {
+      const git = new Git();
+      files = files.filter(file => !git.isIgnored(file));
+    }
 
     this._logger.info(`Discovered ${files.length} files to format`);
 

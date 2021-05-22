@@ -2,7 +2,7 @@
   "name": "jbockle-format-files",
   "displayName": "Format Files",
   "description": "",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "publisher": "jbockle",
   "repository": {
     "type": "git",
@@ -24,6 +24,9 @@
     "onCommand:formatFiles.start.fromGlob"
   ],
   "main": "./out/extension",
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "contributes": {
     "configuration": [
       {
@@ -51,6 +54,12 @@
             "type": "boolean",
             "description": "Whether or not to run 'Organize Imports' when formatting files",
             "default": false
+          },
+          "formatFiles.useGitIgnore": {
+            "scope": "resource",
+            "type": "boolean",
+            "description": "If the workspace folder is a git repository, skips files that git ignores",
+            "default": true
           }
         }
       }
