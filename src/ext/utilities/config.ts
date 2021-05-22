@@ -6,6 +6,7 @@ interface FormatFilesConfig {
   excludePattern?: string;
   inheritWorkspaceExcludedFiles?: boolean;
   runOrganizeImports?: boolean;
+  useGitIgnore?: boolean;
 }
 
 export class Config {
@@ -58,6 +59,10 @@ export class Config {
     return Object.keys(this._excludeFiles)
       .filter(glob => this._excludeFiles[glob])
       .map(glob => glob);
+  }
+
+  public get useGitIgnore(): boolean {
+    return this._formatFilesConfig.useGitIgnore ?? true;
   }
 
   public static load(): void {
