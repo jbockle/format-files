@@ -1,7 +1,8 @@
 import { window } from 'vscode';
 
 export enum LogLevel {
-  info = 1,
+  debug = 0,
+  info,
   warn,
   error,
 }
@@ -9,7 +10,13 @@ export enum LogLevel {
 export class Logger {
   public static readonly outputChannel = window.createOutputChannel('Format Files');
 
+  public static logLevel = LogLevel.info;
+
   public constructor(public source: string) { }
+
+  public debug(message: string): void {
+    Logger.callLog(LogLevel.debug, this.source, message);
+  }
 
   public info(message: string): void {
     Logger.callLog(LogLevel.info, this.source, message);
@@ -31,7 +38,9 @@ export class Logger {
   }
 
   private static callLog(level: LogLevel, source: string, message: string): void {
-    this.outputChannel.appendLine(`[${this.getTimestamp()} ${LogLevel[level].padEnd(5, '.')}] (${source}) ${message}`);
+    if (level >= this.logLevel) {
+      this.outputChannel.appendLine(`[${this.getTimestamp()} ${LogLevel[level].padEnd(5, '.')}] (${source}) ${message}`);
+    }
   }
 
   private static getTimestamp(): string {

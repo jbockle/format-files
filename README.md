@@ -14,6 +14,7 @@ Formats all files in the current workspace/selected folder/glob.  Due to the lim
   * Prompts to use default exclude options or none
   * Keybindable to 'formatFiles.start.fromGlob' command
 * Right click a folder and select "Start Format Files: This Folder"
+  * Uses default exclude options
 
 > Will prompt to confirms to start formatting, check ***Format Files*** in Output pane for list of files that will be formatted
 
@@ -21,11 +22,18 @@ Formats all files in the current workspace/selected folder/glob.  Due to the lim
 
 ### Options
 
-* `formatFiles.extensionsToInclude`: [ *default*: '\*' ]<br>comma delimited list of extensions to include, i.e. "ts,js,cp,cs", if this is not specified all extensions are included
-* `formatFiles.excludePattern`: [ *default*: '\*\*/node_modules, \*\*/.vscode, \*\*/dist/\*\*, \*\*/.chrome']<br>GlobPattern of paths to exclude.  Default excludePattern specifies node_modules and .vscode folder
-* `formatFiles.inheritWorkspaceExcludedFiles`: [ *default*: `true` ]<br>Specifies that workspace globs specified in `files.exclude` that are `true` will be included in exclude glob
-* `formatFiles.runOrganizeImports`: [ *default*: `true` ]<br>Additionally organize all imports when formatting files (Uses the built-in 'Organize Imports' command, which is supported by some languages)
-* `formatFiles.useGitIgnore`: [ *default*: `true` ]<br>If the workspace folder is a git repository, skips files that git ignores
+* `formatFiles.excludedFolders`: [ *default*: `[ "node_modules", ".vscode", ".git", "dist", ".chrome"]` ]  
+  list of folder names to exclude, relative to the workspace root
+* `formatFiles.extensionsToInclude`: [ *default*: '\*' ]  
+  comma delimited list of extensions to include, i.e. "ts,js,cp,cs", if this is not specified all extensions are included
+* `formatFiles.excludePattern`: [ *default*: unset]  
+  GlobPattern of paths to exclude.
+* `formatFiles.inheritWorkspaceExcludedFiles`: [ *default*: `true` ]
+  Specifies that workspace globs specified in `files.exclude` that are `true` will be included in exclude glob
+* `formatFiles.runOrganizeImports`: [ *default*: `true` ]
+  Additionally organize all imports when formatting files (Uses the built-in 'Organize Imports' command, which is supported by some languages)
+* `formatFiles.useGitIgnore`: [ *default*: `true` ]  
+  If the workspace folder is a git repository, skips files that git ignores
 
 ## Requirements
 

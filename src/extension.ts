@@ -2,10 +2,10 @@ import { commands, ExtensionContext, Uri } from 'vscode';
 import { Constants } from './constants';
 import { Logger } from './ext/utilities/logger';
 import prompts from './ext/prompts';
-import { GetFiles } from './ext/queries/get-files';
 import { formatFiles } from './ext/commands/format-files';
 import { validateInWorkspace } from './ext/commands/validate-in-workspace';
 import { Config } from './ext/utilities/config';
+import { FileQueryApi } from './ext/queries/file-query-api';
 
 const logger = new Logger('ext');
 
@@ -40,12 +40,12 @@ function registerCommand(context: ExtensionContext, command: string, callback: a
 
 async function formatFilesInWorkspace(inFolder?: Uri): Promise<void> {
   try {
+    Config.load();
     openOutputChannel();
     logger.info(`Starting Format Files - Workspace ${inFolder ? 'Folder' : ''}`);
-    Config.load();
     validateInWorkspace();
     const workspaceFolder = await prompts.selectWorkspaceFolder(inFolder);
-    const files = await GetFiles.inWorkspace(workspaceFolder, inFolder);
+    const files = await FileQueryApi.getWorkspaceFiles(workspaceFolder, inFolder);
     await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files?`);
     await formatFiles(files);
 
@@ -58,14 +58,14 @@ async function formatFilesInWorkspace(inFolder?: Uri): Promise<void> {
 
 async function fromGlob(): Promise<void> {
   try {
+    Config.load();
     openOutputChannel();
     logger.info(`Starting Format Files - By Glob Pattern`);
-    Config.load();
     validateInWorkspace();
     const workspaceFolder = await prompts.selectWorkspaceFolder();
     const glob = await prompts.requestGlob();
     const useDefaultExcludes = await prompts.useDefaultExcludes();
-    const files = await GetFiles.inWorkspaceWithGlob(workspaceFolder, glob, useDefaultExcludes);
+    const files = await FileQueryApi.getWorkspaceFilesWithGlob(workspaceFolder, { glob, useDefaultExcludes });
     await prompts.confirmStart(`Format Files: Start formatting ${files.length} workspace files using glob '${glob}'?`);
     await formatFiles(files);
 

@@ -2,7 +2,7 @@
   "name": "jbockle-format-files",
   "displayName": "Format Files",
   "description": "",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "publisher": "jbockle",
   "repository": {
     "type": "git",
@@ -31,17 +31,41 @@
     "configuration": [
       {
         "properties": {
+          "formatFiles.logLevel": {
+            "scope": "resource",
+            "type": "string",
+            "default": "debug",
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ]
+          },
           "formatFiles.extensionsToInclude": {
             "scope": "resource",
             "type": "string",
-            "description": "Glob pattern of files to include",
-            "default": "*"
+            "description": "Glob pattern of file extensions to include"
+          },
+          "formatFiles.excludedFolders": {
+            "scope": "resource",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Comma seperated glob pattern of files to exclude",
+            "default": [
+              "node_modules",
+              ".vscode",
+              ".git",
+              "dist",
+              ".chrome"
+            ]
           },
           "formatFiles.excludePattern": {
             "scope": "resource",
             "type": "string",
-            "description": "Comma seperated glob pattern of files to exclude",
-            "default": "**/node_modules,**/.vscode,**/dist/**,**/.chrome"
+            "description": "Comma seperated glob pattern of files to exclude"
           },
           "formatFiles.inheritWorkspaceExcludedFiles": {
             "scope": "resource",
@@ -97,16 +121,21 @@
     "clean": "rimraf out/*"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.16.1",
-    "@typescript-eslint/parser": "^4.16.1",
-    "eslint": "^7.21.0",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^12.*",
-    "@types/vscode": "^1.54.0",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.5.3",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.3",
-    "rimraf": "^3.0.2"
+    "@types/jest": "^26.0.24",
+    "@types/micromatch": "^4.0.2",
+    "@types/node": "^14.*",
+    "@types/vscode": "^1.58.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "eslint": "^7.31.0",
+    "jest": "^27.0.6",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "fdir": "^5.1.0",
+    "micromatch": "^4.0.4"
   }
 }

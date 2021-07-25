@@ -1,46 +1,53 @@
 import { workspace } from 'vscode';
-import { Logger } from './logger';
+import { Logger, LogLevel } from './logger';
 
 interface FormatFilesConfig {
-  extensionsToInclude?: string;
+  extensionsToInclude: string;
   excludePattern?: string;
   inheritWorkspaceExcludedFiles?: boolean;
   runOrganizeImports?: boolean;
   useGitIgnore?: boolean;
+  excludedFolders?: string[];
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
 }
 
 export class Config {
-  private _excludeFiles: Record<string, boolean>;
-  private _formatFilesConfig: FormatFilesConfig;
+  private _excludeFiles: Record<string, boolean> = {};
+  private _formatFilesConfig!: FormatFilesConfig;
   private _logger: Logger;
 
   private constructor() {
     this._logger = new Logger('config');
-    this._excludeFiles = {};
-    this._formatFilesConfig = {};
     this.loadConfigFromWorkspace();
   }
 
   public static readonly instance = new Config();
 
   private loadConfigFromWorkspace(): void {
-    this._formatFilesConfig = workspace.getConfiguration().get<FormatFilesConfig>('formatFiles', {});
+    this._formatFilesConfig = workspace.getConfiguration().get<FormatFilesConfig>('formatFiles', { extensionsToInclude: '' });
     this._excludeFiles = workspace.getConfiguration().get<Record<string, boolean>>('files.exclude', {});
+    Logger.logLevel = LogLevel[this._formatFilesConfig.logLevel ?? 'info'];
     this._logger.info(`config: ${JSON.stringify(this._formatFilesConfig)}`);
     this._logger.info(`excluded files: ${JSON.stringify(this._excludeFiles)}`);
   }
 
-  public get extensionsToInclude(): string {
-    let targetExtensions = this._formatFilesConfig.extensionsToInclude || '*';
+  public get excludedFolders(): string[] {
+    if (Array.isArray(this._formatFilesConfig.excludedFolders)) {
+      return this._formatFilesConfig.excludedFolders;
+    }
+
+    return [];
+  }
+
+  public get extensionsToInclude(): string[] {
+    let targetExtensions = this._formatFilesConfig.extensionsToInclude;
 
     // for backwards compatibility, remove { & } if present
     targetExtensions = targetExtensions.replace(/\{|\}/g, '');
 
-    targetExtensions = targetExtensions.indexOf(',') === -1
-      ? targetExtensions.trim()
-      : `{${targetExtensions.split(',').map(ext => ext.trim()).join(`,`)}}`;
-
-    return targetExtensions;
+    return targetExtensions.split(',')
+      .map(ext => ext.trim())
+      .filter(ext => !!ext);
   }
 
   public get excludePattern(): string {
