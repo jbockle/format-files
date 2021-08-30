@@ -1,7 +1,8 @@
 {
   "name": "jbockle-format-files",
   "displayName": "Format Files",
-  "description": "",
+  "description": "Formats all files in the current workspace, selected folder or glob",
+  "icon": "icon.png",
   "version": "3.4.0",
   "publisher": "jbockle",
   "repository": {
